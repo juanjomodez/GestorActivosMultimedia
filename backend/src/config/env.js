@@ -1,13 +1,18 @@
 import 'dotenv/config';
 
-const REQUERIDAS = ['MONGODB_URI'];
+const REQUERIDAS = [
+  'MONGODB_URI',
+  'CLOUDINARY_CLOUD_NAME',
+  'CLOUDINARY_API_KEY',
+  'CLOUDINARY_API_SECRET',
+];
 
 const faltantes = REQUERIDAS.filter((nombre) => !process.env[nombre]?.trim());
 
 if (faltantes.length > 0) {
   console.error(
     `[env] Faltan variables de entorno obligatorias: ${faltantes.join(', ')}.\n` +
-      '      Crea backend/.env y completa los valores.'
+      '      Copia backend/.env.example a backend/.env y completa los valores.'
   );
   process.exit(1);
 }
@@ -27,6 +32,12 @@ const env = Object.freeze({
   mongo: {
     uri: process.env.MONGODB_URI.trim(),
     nombreBaseDatos: process.env.MONGODB_DB_NAME?.trim() || 'cloud_media_vault',
+  },
+  cloudinary: {
+    cloudName: process.env.CLOUDINARY_CLOUD_NAME.trim(),
+    apiKey: process.env.CLOUDINARY_API_KEY.trim(),
+    apiSecret: process.env.CLOUDINARY_API_SECRET.trim(),
+    carpeta: process.env.CLOUDINARY_FOLDER?.trim() || 'cloud-media-vault',
   },
   tamanoMaximoMB: aEntero(process.env.MAX_FILE_SIZE_MB, 10),
 });
