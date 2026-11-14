@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import env from './config/env.js';
+import { estadoBaseDatos } from './config/db.js';
 
 const app = express();
 
@@ -21,7 +22,14 @@ app.use(
 app.use(express.json({ limit: '100kb' }));
 
 app.get('/api/salud', (_req, res) => {
-  res.json({ estado: 'ok', fecha: new Date().toISOString() });
+  const baseDatos = estadoBaseDatos();
+  const ok = baseDatos === 'conectado';
+
+  res.status(ok ? 200 : 503).json({
+    estado: ok ? 'ok' : 'degradado',
+    servicios: { baseDatos },
+    fecha: new Date().toISOString(),
+  });
 });
 
 app.use((req, res) => {
