@@ -1,0 +1,28 @@
+{
+  "name": "cloud-media-vault-backend",
+  "version": "1.0.0",
+  "description": "API REST del Cloud Media Vault: Express + MongoDB Atlas + Cloudinary",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js"
+  },
+  "engines": {
+    "node": ">=18.18"
+  },
+  "keywords": [
+    "express",
+    "mongodb",
+    "mongoose",
+    "cloudinary"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "cloudinary": "^2.11.0",
+    "cors": "^2.8.6",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.3",
+    "mongoose": "^8.24.9"
+  }
+}
