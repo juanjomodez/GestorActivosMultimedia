@@ -28,6 +28,7 @@ const env = Object.freeze({
     uri: process.env.MONGODB_URI.trim(),
     nombreBaseDatos: process.env.MONGODB_DB_NAME?.trim() || 'cloud_media_vault',
   },
+  tamanoMaximoMB: aEntero(process.env.MAX_FILE_SIZE_MB, 10),
 });
 
 export default env;
