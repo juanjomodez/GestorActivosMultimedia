@@ -1,0 +1,112 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  color: #172936;
+  background: #f1f6f5;
+  font: 1rem / 1.5 Inter, system-ui, sans-serif;
+  --acento: #0b6657;
+  --secundario: #48606a;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; }
+p { margin: 0; }
+
+.contenedor {
+  width: min(calc(100% - 2rem), 44rem);
+  margin: clamp(2rem, 9vh, 6rem) auto;
+}
+
+.encabezado { margin-bottom: 1.5rem; }
+.marca { color: var(--acento); font-weight: 700; }
+h1 {
+  margin: 0.25rem 0;
+  font-size: clamp(2rem, 7vw, 3.25rem);
+  line-height: 1.1;
+  letter-spacing: -0.045em;
+}
+
+.modo { margin-top: 0.65rem; color: var(--secundario); }
+
+.tarjeta {
+  padding: clamp(1.25rem, 5vw, 2rem);
+  border: 1px solid #d4e0dd;
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 1rem 3rem #1b45300a;
+}
+
+fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
+.campos { display: grid; gap: 1rem; margin-bottom: 1.25rem; }
+
+.campos label { display: grid; gap: 0.35rem; font-weight: 600; }
+.campos input {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid #a8bab7;
+  border-radius: 0.5rem;
+  color: inherit;
+  font: inherit;
+  font-weight: 400;
+}
+
+.zona-archivo {
+  position: relative;
+  display: grid;
+  gap: 0.35rem;
+  min-height: 10rem;
+  place-content: center;
+  padding: 1.25rem 1rem;
+  border: 2px dashed #81a89f;
+  border-radius: 0.75rem;
+  background: #f4faf8;
+  color: var(--secundario);
+  cursor: pointer;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+.zona-archivo strong { color: var(--acento); }
+fieldset:enabled .zona-archivo:hover,
+.zona-activa { border-color: var(--acento); background: #e8f6ef; }
+
+.visualmente-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+:focus-visible,
+.zona-archivo:focus-within { outline: 3px solid #259779; outline-offset: 3px; }
+
+button {
+  min-height: 2.75rem;
+  margin-top: 1.25rem;
+  padding: 0.6rem 1.2rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: var(--acento);
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:hover:enabled { background: #084b40; }
+button:disabled { opacity: 0.72; }
+fieldset:disabled .zona-archivo { cursor: default; }
+
+.estado-carga, .mensaje { margin-top: 1rem; }
+.estado-carga { color: var(--secundario); font-size: 0.9rem; }
+progress { display: block; width: 100%; height: 0.65rem; margin-bottom: 0.5rem; accent-color: var(--acento); }
+.mensaje { padding: 0.65rem 0.8rem; border-radius: 0.5rem; }
+.error { color: #8b2635; background: #fff0f1; }
+.exito { color: #125b3e; background: #e8f7ee; }
+
+@media (min-width: 38rem) {
+  .campos { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
+}
