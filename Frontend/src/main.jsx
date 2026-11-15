@@ -1,11 +1,12 @@
 import { useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { formatosAceptados, limiteMB, subirArchivo, validarArchivo } from './carga.js';
+import GaleriaMultimedia from './componentes/GaleriaMultimedia.jsx';
 import './estilos.css';
 
 const urlCarga = import.meta.env.VITE_UPLOAD_URL?.trim();
 
-function FormularioDeCarga() {
+function FormularioDeCarga({ alSubir }) {
   const [archivo, setArchivo] = useState(null);
   const [errorArchivo, setErrorArchivo] = useState('');
   const [arrastrando, setArrastrando] = useState(false);
@@ -63,6 +64,7 @@ function FormularioDeCarga() {
       await subirArchivo({ datos, url: urlCarga, alProgresar: setProgreso });
       formulario.reset();
       setArchivo(null);
+      alSubir?.();
       setResultado({ mensaje: urlCarga ? 'Archivo subido correctamente.' : 'Carga simulada completada.' });
     } catch (errorCarga) {
       setResultado({ error: true, mensaje: errorCarga.message });
@@ -147,4 +149,15 @@ function FormularioDeCarga() {
   );
 }
 
-createRoot(document.getElementById('root')).render(<FormularioDeCarga />);
+function App() {
+  const [recarga, setRecarga] = useState(0);
+
+  return (
+    <>
+      <FormularioDeCarga alSubir={() => setRecarga((n) => n + 1)} />
+      <GaleriaMultimedia recarga={recarga} />
+    </>
+  );
+}
+
+createRoot(document.getElementById('root')).render(<App />);
