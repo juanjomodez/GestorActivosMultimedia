@@ -3,6 +3,7 @@ import cors from 'cors';
 import env from './config/env.js';
 import { estadoBaseDatos } from './config/db.js';
 import { verificarCloudinary } from './config/cloudinary.js';
+import archivosRouter from './routes/archivos.js';
 
 const app = express();
 
@@ -35,7 +36,7 @@ app.get('/api/salud', async (_req, res) => {
 });
 
 // Aquí se montan las rutas de la API, por ejemplo:
-// app.use('/api/archivos', archivosRouter);
+app.use('/api/archivos', archivosRouter);
 
 app.use((req, res) => {
   res.status(404).json({ error: `Ruta no encontrada: ${req.method} ${req.originalUrl}` });

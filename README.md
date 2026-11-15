@@ -243,3 +243,17 @@ Responde `200` si Atlas y Cloudinary están conectados y `503` si alguno falla.
 - Cloudinary configurado con `secure: true`, así todas las URL son HTTPS.
 - Validación de variables de entorno al arrancar.
 - En producción, los errores internos no exponen detalles al cliente.
+
+## Rol 2 — Santiago — Recepción y subida de archivos
+
+El endpoint `POST /api/archivos` recibe `multipart/form-data` con un archivo en el campo `archivo`, un `titulo` de hasta 150 caracteres y `subidoPor` de hasta 80 caracteres. Ambos textos son obligatorios. El archivo se recibe en memoria y se valida contra los MIME y el límite configurados en el modelo Archivo (10 MB por defecto).
+
+Desde `backend`, ejecutar `npm install` para instalar Multer y actualizar el archivo de bloqueo, completar `.env` con las credenciales compartidas por Alejandro e iniciar con `npm run dev`.
+
+Para probar con Postman, usar POST `http://localhost:4000/api/archivos` y Body → form-data. Configurar `archivo` como File y los otros dos campos como Text. Postman genera el encabezado multipart con su boundary.
+
+Una subida exitosa devuelve HTTP 201 con `titulo`, `subidoPor`, `url`, `publicId`, `tipoArchivo`, `mimeType`, `recursoCloud` y `tamanoBytes`. En esta etapa la respuesta confirma la subida a Cloudinary. El guardado de esos metadatos en Atlas corresponde a la integración del rol 3. La función `subirArchivo` en `backend/src/services/subirArchivo.js` devuelve los metadatos para ese paso.
+
+Los errores devuelven un JSON con el campo `error`: HTTP 400 para formulario, formato o archivo vacío inválidos, 413 para tamaño excedido y 500 para fallos de subida a Cloudinary.
+
+Probar imágenes, videos y PDF permitidos, un formato rechazado, un archivo vacío, uno que exceda el límite, ausencia de archivo, título o autor y un fallo del proveedor. Para repetir pruebas exitosas, recordar que cada solicitud crea un recurso en Cloudinary.
