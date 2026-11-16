@@ -257,3 +257,69 @@ Una subida exitosa devuelve HTTP 201 con `titulo`, `subidoPor`, `url`, `publicId
 Los errores devuelven un JSON con el campo `error`: HTTP 400 para formulario, formato o archivo vacío inválidos, 413 para tamaño excedido y 500 para fallos de subida a Cloudinary.
 
 Probar imágenes, videos y PDF permitidos, un formato rechazado, un archivo vacío, uno que exceda el límite, ausencia de archivo, título o autor y un fallo del proveedor. Para repetir pruebas exitosas, recordar que cada solicitud crea un recurso en Cloudinary.
+
+## Rol 3 — Jesús — Persistencia CRUD y sincronización
+
+Archivos: `backend/src/services/archivos.js` (lógica) y `backend/src/routes/archivos.js` (endpoints).
+
+### Guardado tras la subida (`POST /api/archivos`)
+
+Cuando Cloudinary confirma la subida, los metadatos que devuelve `subirArchivo` se guardan en Atlas con el modelo `Archivo`. La respuesta `201` ahora es el documento guardado, con `id`, `fechaSubida` y `tamanoFormateado`.
+
+Si Atlas rechaza el registro (por ejemplo, por validación), el archivo recién subido se borra de Cloudinary para no dejar binarios huérfanos y se responde `400`. Un `publicId` duplicado responde `409` y no borra nada.
+
+### Consulta (`GET /api/archivos`)
+
+| Parámetro | Valores | Por defecto |
+| --- | --- | --- |
+| `tipo` | `imagen`, `video`, `pdf` o `todos` | todos |
+| `q` o `titulo` | Texto contenido en el título (ignora mayúsculas y tildes) | |
+| `subidoPor` | Texto contenido en el autor | |
+| `orden` | `recientes`, `antiguos`, `titulo`, `tamano` (mayor primero) | `recientes` |
+| `pagina` | Entero ≥ 1 | `1` |
+| `limite` | Entero entre 1 y 100 | `20` |
+
+Ejemplo: `GET /api/archivos?tipo=imagen&q=logo&orden=recientes`
+
+```json
+{
+  "total": 1,
+  "pagina": 1,
+  "limite": 20,
+  "totalPaginas": 1,
+  "archivos": [
+    {
+      "id": "6736...",
+      "titulo": "Logo",
+      "url": "https://res.cloudinary.com/...",
+      "publicId": "cloud-media-vault/abc123",
+      "tipoArchivo": "imagen",
+      "mimeType": "image/png",
+      "recursoCloud": "image",
+      "tamanoBytes": 24576,
+      "tamanoFormateado": "24.0 KB",
+      "fechaSubida": "2026-11-16T18:00:00.000Z",
+      "subidoPor": "Jesús"
+    }
+  ]
+}
+```
+
+Un parámetro inválido (por ejemplo `tipo=audio`) responde `400`. También existe `GET /api/archivos/:id` para consultar un solo archivo.
+
+### Eliminación sincronizada (`DELETE /api/archivos/:id`)
+
+1. Busca el documento en Atlas (`400` si el id no es válido, `404` si no existe).
+2. Borra el binario en Cloudinary con `publicId` y `recursoCloud`. Si Cloudinary falla, responde `502` y el registro se conserva para reintentar. Si el archivo ya no existía en Cloudinary, continúa.
+3. Borra el documento en Atlas y responde `200`:
+
+```json
+{ "mensaje": "Archivo eliminado de Cloudinary y de la base de datos.", "nube": "ok", "archivo": { "id": "6736...", "titulo": "Logo" } }
+```
+
+### Pruebas con Postman
+
+1. `POST /api/archivos` con form-data y copiar el `id` de la respuesta.
+2. `GET /api/archivos` y comprobar que aparece primero. Probar `?tipo=pdf`, `?q=` sin tildes y `?orden=titulo`.
+3. `DELETE /api/archivos/<id>` y comprobar en la Media Library de Cloudinary y en Atlas que desapareció.
+4. Repetir el `DELETE`: debe responder `404`. Probar también `DELETE /api/archivos/123` (`400`).
