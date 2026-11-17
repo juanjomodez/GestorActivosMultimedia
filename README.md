@@ -50,10 +50,10 @@ pruebas de integración y limpieza de errores en consola antes de la entrega
 
 Los archivos (imágenes, videos y PDF) se guardan en **Cloudinary** y sus metadatos en **MongoDB Atlas**, a través de una API REST en **Express**. El frontend se construye en **React + Vite** (Ruta B: arquitectura desacoplada cliente-servidor).
 
-## Rol 1: Arquitecto Cloud y Base de Datos
+## Rol 1 — Alejandro — Arquitecto Cloud y Base de Datos
 
 **Integrante:** Alejandro
-**Rama:** `rol1-cloud-bd`
+**Rama:** `Alejandro`
 
 ### Responsabilidades
 
@@ -101,8 +101,13 @@ backend/
     │   ├── env.js               # Carga y valida las variables de entorno
     │   ├── db.js                # Conexión a MongoDB Atlas con Mongoose
     │   └── cloudinary.js        # Configuración del SDK de Cloudinary
-    └── models/
-        └── Archivo.js           # Modelo de metadatos
+    ├── models/
+    │   └── Archivo.js           # Modelo de metadatos
+    ├── routes/
+    │   └── archivos.js          # Endpoints POST, GET y DELETE
+    └── services/
+        ├── subirArchivo.js      # Subida a Cloudinary
+        └── archivos.js          # Guardado, consulta y eliminación
 ```
 
 ---
@@ -323,3 +328,32 @@ Un parámetro inválido (por ejemplo `tipo=audio`) responde `400`. También exis
 2. `GET /api/archivos` y comprobar que aparece primero. Probar `?tipo=pdf`, `?q=` sin tildes y `?orden=titulo`.
 3. `DELETE /api/archivos/<id>` y comprobar en la Media Library de Cloudinary y en Atlas que desapareció.
 4. Repetir el `DELETE`: debe responder `404`. Probar también `DELETE /api/archivos/123` (`400`).
+
+## Rol 4 — Yeferson — Formulario de carga
+
+Archivos: `Frontend/src/main.jsx` (formulario) y `Frontend/src/carga.js` (validación y envío).
+
+El formulario permite escribir el título y el autor, y escoger el archivo con clic o arrastrándolo. Antes de enviarlo revisa que el formato sea permitido y que no pese más de 10 MB. Luego lo envía con `FormData` a `POST /api/archivos`, muestra una barra de progreso mientras sube y al final un mensaje de éxito o de error.
+
+## Rol 5 — Juan José — Galería, filtros y QA
+
+Archivos: `Frontend/src/componentes/` (`GaleriaMultimedia.jsx`, `TarjetaArchivo.jsx`, `VistaPrevia.jsx`, `Filtros.jsx`), `Frontend/src/servicios/api.js`, `Frontend/src/utils/formato.js` y `Frontend/src/galeria.css`.
+
+La galería consume `GET /api/archivos` y muestra cada archivo en una tarjeta con su vista previa: la imagen en miniatura, un reproductor para los videos y un enlace para abrir los PDF. Cada tarjeta muestra el título, quién lo subió, el peso en KB o MB, el tipo y la fecha de subida.
+
+Arriba de la galería están los filtros por tipo (Todos, Imágenes, Videos y PDF) y un buscador por título que no distingue mayúsculas ni tildes. Cada tarjeta tiene un botón para eliminar que llama a `DELETE /api/archivos/:id`. Cuando el backend confirma, la tarjeta desaparece de inmediato sin recargar la página. La galería también se actualiza sola cada vez que se sube un archivo nuevo desde el formulario.
+
+### Pruebas de integración
+
+- Subir una imagen, un video y un PDF, y comprobar que aparecen en la galería, en Cloudinary y en Atlas.
+- Intentar subir un archivo de más de 10 MB y uno con formato no permitido: en los dos casos sale un mensaje de error.
+- Filtrar por cada tipo y buscar por título con y sin tildes.
+- Eliminar un archivo y comprobar que desaparece de la galería, de Cloudinary y de Atlas.
+- Apagar el backend y comprobar que la galería muestra un mensaje de error claro.
+- Revisar que la consola del navegador (F12) no muestre errores.
+
+## Cómo abrir el proyecto completo
+
+1. **Backend:** en una terminal, entrar a `backend`, ejecutar `npm install`, crear el archivo `.env` a partir de `.env.example` con las credenciales y ejecutar `npm run dev`. Queda en `http://localhost:4000`.
+2. **Frontend:** en otra terminal, entrar a `Frontend`, ejecutar `npm install`, copiar `.env.example` como `.env.local` y ejecutar `npm run dev`.
+3. Abrir `http://localhost:5173` en el navegador. Arriba aparece el formulario para subir archivos y abajo la galería.
