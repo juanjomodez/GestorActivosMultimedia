@@ -1,5 +1,6 @@
 Taller Práctico Colaborativo: Gestor de Activos
 Multimedia en la Nube (Cloud Media Vault)
+La Demo del funcionamiento se encuentra en la carpeta "Demo"
 
 Distribución de Roles y Trabajo en Equipo
 
