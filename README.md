@@ -1,5 +1,10 @@
 Taller Práctico Colaborativo: Gestor de Activos
 Multimedia en la Nube (Cloud Media Vault)
+
+[![Ver el video explicativo de Cloud Media Vault](Demo/portada-video.jpg)](Video-explicativo-Cloud-Media-Vault.mp4)
+
+**[Ver el video explicativo (2:21)](Video-explicativo-Cloud-Media-Vault.mp4)**: recorrido completo por la aplicación, subiendo, filtrando, abriendo y eliminando archivos.
+
 La Demo del funcionamiento se encuentra en la carpeta "Demo"
 
 Distribución de Roles y Trabajo en Equipo
